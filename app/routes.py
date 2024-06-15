@@ -79,3 +79,7 @@ def cast_vote():
     tx_hash = contract.functions.castVote(university_id, election_id, nullifier_hash, proof).transact({'from': w3.eth.accounts[0]})
     w3.eth.wait_for_transaction_receipt(tx_hash)
     return redirect(url_for('main.index'))
+
+@main.route('/results', methods=['GET'])
+def results():
+    return render_template('results.html')
