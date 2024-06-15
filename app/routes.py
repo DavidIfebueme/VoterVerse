@@ -2,10 +2,11 @@ from flask import Blueprint, render_template, request, redirect, url_for
 from web3 import Web3
 import json
 import os
+import subprocess
 
 main = Blueprint('main', __name__)
 
-# Configurng Web3 first, why? Cos i wanna
+# Configure Web3
 w3 = Web3(Web3.HTTPProvider(os.getenv('WEB3_PROVIDER')))
 with open('contracts/VoterVerse.json') as f:
     contract_data = json.load(f)
@@ -49,6 +50,26 @@ def register_voter():
     w3.eth.wait_for_transaction_receipt(tx_hash)
     return redirect(url_for('main.index'))
 
+@main.route('/generate_proof', methods=['POST'])
+def generate_proof():
+    input_data = {
+        "nullifierHash": request.form['nullifier_hash']
+    }
+    with open('zk/input.json', 'w') as f:
+        json.dump(input_data, f)
+
+    subprocess.run(['node', 'zk/generate_proof.js'])
+
+    with open('zk/proof.json') as f:
+        proof = json.load(f)
+    with open('zk/public.json') as f:
+        public_signals = json.load(f)
+
+    return {
+        'proof': proof,
+        'public_signals': public_signals
+    }
+
 @main.route('/cast_vote', methods=['POST'])
 def cast_vote():
     university_id = int(request.form['university_id'])
@@ -58,4 +79,3 @@ def cast_vote():
     tx_hash = contract.functions.castVote(university_id, election_id, nullifier_hash, proof).transact({'from': w3.eth.accounts[0]})
     w3.eth.wait_for_transaction_receipt(tx_hash)
     return redirect(url_for('main.index'))
-
