@@ -1,61 +1,61 @@
-# from flask import render_template
-# from . import db
-# from flask import current_app as app
-from flask import Blueprint, render_template
+from flask import Blueprint, render_template, request, redirect, url_for
+from web3 import Web3
+import json
+import os
 
 main = Blueprint('main', __name__)
+
+# Configurng Web3 first, why? Cos i wanna
+w3 = Web3(Web3.HTTPProvider(os.getenv('WEB3_PROVIDER')))
+with open('contracts/VoterVerse.json') as f:
+    contract_data = json.load(f)
+contract_address = Web3.toChecksumAddress(os.getenv('CONTRACT_ADDRESS'))
+contract = w3.eth.contract(address=contract_address, abi=contract_data['abi'])
 
 @main.route('/')
 def index():
     return render_template('index.html')
 
-@main.route('/register', methods=['POST'])
-def register():
-    pass
+@main.route('/create_election', methods=['POST'])
+def create_election():
+    university_id = int(request.form['university_id'])
+    tx_hash = contract.functions.createElection(university_id).transact({'from': w3.eth.accounts[0]})
+    w3.eth.wait_for_transaction_receipt(tx_hash)
+    return redirect(url_for('main.index'))
 
-@main.route('/results', methods=['POST'])
-def results():
-    pass
+@main.route('/start_voting', methods=['POST'])
+def start_voting():
+    university_id = int(request.form['university_id'])
+    election_id = int(request.form['election_id'])
+    tx_hash = contract.functions.startVoting(university_id, election_id).transact({'from': w3.eth.accounts[0]})
+    w3.eth.wait_for_transaction_receipt(tx_hash)
+    return redirect(url_for('main.index'))
 
-@main.route('/profile', methods=['POST'])
-def profile():
-    pass
+@main.route('/end_election', methods=['POST'])
+def end_election():
+    university_id = int(request.form['university_id'])
+    election_id = int(request.form['election_id'])
+    tx_hash = contract.functions.endElection(university_id, election_id).transact({'from': w3.eth.accounts[0]})
+    w3.eth.wait_for_transaction_receipt(tx_hash)
+    return redirect(url_for('main.index'))
 
-@main.route('/generate_proof', methods=['POST'])
-def generate_proof_route():
-    data = request.get_json()
-    vote = data['vote']
-    nullifier = data['nullifier']
+@main.route('/register_voter', methods=['POST'])
+def register_voter():
+    university_id = int(request.form['university_id'])
+    election_id = int(request.form['election_id'])
+    voter_address = request.form['voter_address']
+    nullifier_hash = int(request.form['nullifier_hash'])
+    tx_hash = contract.functions.registerVoter(university_id, election_id, voter_address, nullifier_hash).transact({'from': w3.eth.accounts[0]})
+    w3.eth.wait_for_transaction_receipt(tx_hash)
+    return redirect(url_for('main.index'))
 
-    proof_data = generate_proof(vote, nullifier)
-    if proof_data is None or '':
-        return jsonify({'error': 'proof generation failed'}), 500
-
-    return jsonify(proof_data)
-
-
-# script to call nodejs script that generates the proof and 
-# then passes proof to flask for submition with vote to blockchain
-def generate_proof(vote, nullifier):
-    input_data = {
-        'vote': vote,
-        'nullifier': nullifier
-    }
-
-    with open("app/zk/input.json", "w") as f:
-        json.dump(input_data, f)
-
-    result = subprocess.run(["node", "app/zk/generate_proof.js"], capture_output=True, text=True)
-
-    if result.returncode != 0:
-        print("Error generating proof", result.stderr)
-        return None
-
-    with open("app/zk/proof.json", "r") as f:
-        proof_data = json.load(f)
-
-    return proof_data    
-
-
-
+@main.route('/cast_vote', methods=['POST'])
+def cast_vote():
+    university_id = int(request.form['university_id'])
+    election_id = int(request.form['election_id'])
+    nullifier_hash = int(request.form['nullifier_hash'])
+    proof = json.loads(request.form['proof'])
+    tx_hash = contract.functions.castVote(university_id, election_id, nullifier_hash, proof).transact({'from': w3.eth.accounts[0]})
+    w3.eth.wait_for_transaction_receipt(tx_hash)
+    return redirect(url_for('main.index'))
 
