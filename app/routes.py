@@ -1,5 +1,5 @@
 from flask import Blueprint, render_template, request, redirect, url_for
-from web3 import Web3
+#from web3 import Web3
 import json
 import os
 import subprocess
@@ -7,11 +7,11 @@ import subprocess
 main = Blueprint('main', __name__)
 
 # Configure Web3
-w3 = Web3(Web3.HTTPProvider(os.getenv('WEB3_PROVIDER')))
-with open('contracts/VoterVerse.json') as f:
-    contract_data = json.load(f)
-contract_address = Web3.toChecksumAddress(os.getenv('CONTRACT_ADDRESS'))
-contract = w3.eth.contract(address=contract_address, abi=contract_data['abi'])
+# w3 = Web3(Web3.HTTPProvider(os.getenv('WEB3_PROVIDER')))
+# with open('contracts/VoterVerse.json') as f:
+#     contract_data = json.load(f)
+# contract_address = Web3.toChecksumAddress(os.getenv('CONTRACT_ADDRESS'))
+# contract = w3.eth.contract(address=contract_address, abi=contract_data['abi'])
 
 @main.route('/')
 def index():
