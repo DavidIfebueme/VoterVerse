@@ -3,4 +3,3 @@ __pycache__/
 .env
 instance/
 .DS_Store
-config.py
