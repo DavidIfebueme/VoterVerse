@@ -1,7 +1,5 @@
 {% extends "base.html" %}
 
-{% block title %}Home | VoterVerse{% endblock %}
-
 {% block content %}
 <section class="w-full py-12 md:py-24 lg:py-32 bg-gray-900 text-white">
     <div class="container px-4 md:px-6">
@@ -9,22 +7,35 @@
             <div class="flex flex-col justify-center space-y-4">
                 <div class="space-y-2">
                     <h1 class="text-3xl font-bold tracking-tighter sm:text-5xl xl:text-6xl/none">
-                        Secure and Transparent Voting
+                        Welcome to VoterVerse
                     </h1>
                     <p class="max-w-[600px] text-gray-300 md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
-                        Our blockchain-based voting software ensures the integrity of the electoral process. Securely cast your ballot and view real-time results.
+                        Our blockchain-based voting software facilitated by zero knowledge proofs to ensure ultimate anonymity and security in 
+                        electoral processes.
                     </p>
                 </div>
                 <div class="flex flex-col gap-2 min-[400px]:flex-row">
-                    <a href="{{ url_for('main.register_voter') }}" class="inline-flex h-10 items-center justify-center rounded-md bg-indigo-500 px-8 text-sm font-medium text-white shadow transition-colors hover:bg-indigo-600 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-indigo-950 disabled:pointer-events-none disabled:opacity-50">
+                    <a
+                        href="#"
+                        class="inline-flex h-10 items-center justify-center rounded-md bg-indigo-500 px-8 text-sm font-medium text-white shadow transition-colors hover:bg-indigo-600 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-indigo-950 disabled:pointer-events-none disabled:opacity-50"
+                    >
                         Register to Vote
                     </a>
-                    <a href="{{ url_for('main.cast_vote') }}" class="inline-flex h-10 items-center justify-center rounded-md border border-indigo-500 bg-transparent px-8 text-sm font-medium text-indigo-500 shadow-sm transition-colors hover:bg-indigo-500 hover:text-white focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-indigo-950 disabled:pointer-events-none disabled:opacity-50">
+                    <a
+                        href="#"
+                        class="inline-flex h-10 items-center justify-center rounded-md border border-indigo-500 bg-transparent px-8 text-sm font-medium text-indigo-500 shadow-sm transition-colors hover:bg-indigo-500 hover:text-white focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-indigo-950 disabled:pointer-events-none disabled:opacity-50"
+                    >
                         Cast Your Ballot
                     </a>
                 </div>
             </div>
-            <img src="{{ url_for('static', filename='images/placeholder.svg') }}" width="550" height="550" alt="Secure Voting" class="mx-auto aspect-square overflow-hidden rounded-xl object-cover object-center sm:w-full lg:order-last">
+            <img
+                src="{{ url_for('static', filename='images/placeholder.jpg') }}"
+                width="550"
+                height="550"
+                alt="Secure Voting"
+                class="mx-auto aspect-square overflow-hidden rounded-xl object-cover object-center sm:w-full lg:order-last"
+            />
         </div>
     </div>
 </section>
@@ -32,19 +43,22 @@
     <div class="container px-4 md:px-6">
         <div class="flex flex-col items-center justify-center space-y-4 text-center">
             <div class="space-y-2">
-                <div class="inline-block rounded-lg bg-gray-100 px-3 py-1 text-sm dark:bg-gray-800">
-                    Secure Voting
-                </div>
-                <h2 class="text-3xl font-bold tracking-tighter sm:text-5xl">
-                    Blockchain-Powered Transparency
-                </h2>
+                <div class="inline-block rounded-lg bg-gray-100 px-3 py-1 text-sm dark:bg-gray-800">Secure Voting</div>
+                <h2 class="text-3xl font-bold tracking-tighter sm:text-5xl">Blockchain-Powered Transparency</h2>
                 <p class="max-w-[900px] text-gray-500 md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed dark:text-gray-400">
-                    Our blockchain-based voting system ensures the integrity of the electoral process. Every vote is securely recorded and the results are publicly verifiable.
+                    Our blockchain-based voting system ensures the integrity of the electoral process. Every vote is
+                    securely recorded in zero knowledge and the results are publicly verifiable.
                 </p>
             </div>
         </div>
         <div class="mx-auto grid max-w-5xl items-center gap-6 py-12 lg:grid-cols-2 lg:gap-12">
-            <img src="{{ url_for('static', filename='images/placeholder.svg') }}" width="550" height="310" alt="Blockchain Voting" class="mx-auto aspect-video overflow-hidden rounded-xl object-cover object-center sm:w-full lg:order-last">
+            <img
+                src="{{ url_for('static', filename='images/blockchain.jpg') }}"
+                width="550"
+                height="310"
+                alt="Blockchain Voting"
+                class="mx-auto aspect-video overflow-hidden rounded-xl object-cover object-center sm:w-full lg:order-last"
+            />
             <div class="flex flex-col justify-center space-y-4">
                 <ul class="grid gap-6">
                     <li>
@@ -57,17 +71,17 @@
                     </li>
                     <li>
                         <div class="grid gap-1">
-                            <h3 class="text-xl font-bold">Transparent Results</h3>
+                            <h3 class="text-xl font-bold">Anonymity</h3>
                             <p class="text-gray-500 dark:text-gray-400">
-                                View real-time election results with complete transparency.
+                                No one will ever know who you voted for as a result of our zero knowledge proof circuits
                             </p>
                         </div>
                     </li>
                     <li>
                         <div class="grid gap-1">
-                            <h3 class="text-xl font-bold">Tamper-Proof Records</h3>
+                            <h3 class="text-xl font-bold">Transparent Results</h3>
                             <p class="text-gray-500 dark:text-gray-400">
-                                Immutable blockchain records ensure the integrity of the electoral process.
+                                The results are verifieable by anyone on the blockchain
                             </p>
                         </div>
                     </li>
