@@ -17,6 +17,7 @@ contract VoterVerse {
     }
 
     struct University {
+        bool exists;
         mapping(uint256 => Election) elections;
         uint256 electionCount;
     }
@@ -24,10 +25,18 @@ contract VoterVerse {
     mapping(uint256 => University) public universities;
 
     event ElectionCreated(uint256 universityId, uint256 electionId);
+    event UniversityAdded(uint256 universityId);
     event VoterRegistered(uint256 universityId, uint256 electionId, address voter);
     event VoteCast(uint256 universityId, uint256 electionId, uint256 nullifierHash);
 
+    function addUniversity(uint256 universityId) external {
+        require(!universities[universityId].exists, "University already exists");
+        universities[universityId].exists = true;
+        emit UniversityAdded(universityId);
+    }
+
     function createElection(uint256 universityId) external {
+        require(universities[universityId].exists, "University does not exist");
         University storage university = universities[universityId];
         uint256 electionId = university.electionCount;
         university.elections[electionId].phase = ElectionPhase.Registration;
@@ -36,18 +45,21 @@ contract VoterVerse {
     }
 
     function startVoting(uint256 universityId, uint256 electionId) external {
+        require(universities[universityId].exists, "University does not exist");
         University storage university = universities[universityId];
         require(university.elections[electionId].phase == ElectionPhase.Registration, "Registration phase must be active to start voting");
         university.elections[electionId].phase = ElectionPhase.Voting;
     }
 
     function endElection(uint256 universityId, uint256 electionId) external {
+        require(universities[universityId].exists, "University does not exist");
         University storage university = universities[universityId];
         require(university.elections[electionId].phase == ElectionPhase.Voting, "Voting phase must be active to end election");
         university.elections[electionId].phase = ElectionPhase.Ended;
     }
 
     function registerVoter(uint256 universityId, uint256 electionId, address _voter, uint256 _nullifierHash) external {
+        require(universities[universityId].exists, "University does not exist");
         University storage university = universities[universityId];
         Election storage election = university.elections[electionId];
         require(election.phase == ElectionPhase.Registration, "Registration phase is not active");
@@ -57,6 +69,7 @@ contract VoterVerse {
     }
 
     function castVote(uint256 universityId, uint256 electionId, uint256 _nullifierHash) external {
+        require(universities[universityId].exists, "University does not exist");
         University storage university = universities[universityId];
         Election storage election = university.elections[electionId];
         Voter storage voter = election.voters[msg.sender];
@@ -71,6 +84,7 @@ contract VoterVerse {
     }
 
     function hasVoted(uint256 universityId, uint256 electionId, address _voter) external view returns (bool) {
+        require(universities[universityId].exists, "University does not exist");
         University storage university = universities[universityId];
         Election storage election = university.elections[electionId];
         return election.voters[_voter].voted;
