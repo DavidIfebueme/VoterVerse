@@ -1,15 +1,62 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
+{% extends "base.html" %}
 
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VoterVerse</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-
-</head> 
-<body>
-    <h1>Welcome to VoterVerse</h1>
-    <p>This is ithe register</p>
-</body>
-</html>
+{% block content %}
+<main class="flex-1">
+  <section class="w-full py-12 md:py-24 lg:py-32 bg-gray-100 dark:bg-gray-800">
+    <div class="container px-4 md:px-6">
+      <div class="grid gap-6 lg:grid-cols-2 lg:gap-12 xl:gap-16">
+        <div class="flex flex-col justify-center space-y-4">
+          <div class="space-y-2">
+            <h1 class="text-3xl font-bold tracking-tighter sm:text-5xl xl:text-6xl/none">Register For Election</h1>
+            <p class="max-w-[600px] text-gray-500 md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed dark:text-gray-400">
+              Securely register to vote and participate in the electoral process. Our blockchain-based system
+              ensures your full anonymity
+            </p>
+          </div>
+          <form class="grid gap-4">
+            <div class="grid gap-2">
+              <label
+                class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                for="university-id"
+              >
+                University ID
+              </label>
+              <input
+                class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                id="university-id"
+                placeholder="Enter your university ID"
+              />
+            </div>
+            <div class="grid gap-2">
+              <label
+                class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                for="election-id"
+              >
+                Election ID
+              </label>
+              <input
+                class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                id="election-id"
+                placeholder="Enter the election ID"
+              />
+            </div>
+            <button
+              class="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2 w-full"
+              type="submit"
+            >
+              Register with Wallet
+            </button>
+          </form>
+        </div>
+        <img
+          src="{{ url_for('static', filename='images/placeholder.jpg') }}"
+          width="550"
+          height="550"
+          alt="Secure Voting"
+          class="mx-auto aspect-square overflow-hidden rounded-xl object-cover object-center sm:w-full lg:order-last"
+        />
+      </div>
+    </div>
+  </section>
+</main>
+{% endblock %}
