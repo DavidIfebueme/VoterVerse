@@ -1,92 +1,135 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-contract VoterVerse {
-    enum ElectionPhase { NotStarted, Registration, Voting, Ended }
+import "./RegistrationVerifier.sol";
+import "./VotingVerifier.sol";
 
-    struct Voter {
-        bool registered;
-        bool voted;
-        uint256 nullifierHash;
+contract VoterVerse {
+    struct Candidate {
+        uint256 candidateID;
+        string name;
     }
 
     struct Election {
-        ElectionPhase phase;
-        uint256 totalVotes;
-        mapping(address => Voter) voters;
+        uint256 universityID;
+        uint256 electionID;
+        bool isVotingOpen;
+        mapping(uint256 => Candidate) candidates;
+        uint256 candidateCount;
+        mapping(address => bool) hasVoted;
+        mapping(bytes32 => bool) registeredVoters;
     }
 
-    struct University {
-        bool exists;
-        mapping(uint256 => Election) elections;
-        uint256 electionCount;
+    RegistrationVerifier public registrationVerifier;
+    VotingVerifier public votingVerifier;
+    mapping(uint256 => mapping(uint256 => Election)) public elections;
+    mapping(uint256 => bool) public universities;
+
+    event UniversityAdded(uint256 universityID);
+    event ElectionCreated(uint256 universityID, uint256 electionID);
+    event CandidateAdded(uint256 universityID, uint256 electionID, uint256 candidateID, string name);
+    event VotingStarted(uint256 universityID, uint256 electionID);
+    event VotingEnded(uint256 universityID, uint256 electionID);
+    event VoterRegistered(uint256 universityID, uint256 electionID, bytes32 nullifierHash);
+    event VoteCast(uint256 universityID, uint256 electionID, bytes32 nullifierHash, uint256 candidateID);
+
+    constructor(address _registrationVerifier, address _votingVerifier) {
+        registrationVerifier = RegistrationVerifier(_registrationVerifier);
+        votingVerifier = VotingVerifier(_votingVerifier);
     }
 
-    mapping(uint256 => University) public universities;
-
-    event ElectionCreated(uint256 universityId, uint256 electionId);
-    event UniversityAdded(uint256 universityId);
-    event VoterRegistered(uint256 universityId, uint256 electionId, address voter);
-    event VoteCast(uint256 universityId, uint256 electionId, uint256 nullifierHash);
-
-    function addUniversity(uint256 universityId) external {
-        require(!universities[universityId].exists, "University already exists");
-        universities[universityId].exists = true;
-        emit UniversityAdded(universityId);
+    modifier onlyUniversity(uint256 universityID) {
+        require(universities[universityID], "University not registered");
+        _;
     }
 
-    function createElection(uint256 universityId) external {
-        require(universities[universityId].exists, "University does not exist");
-        University storage university = universities[universityId];
-        uint256 electionId = university.electionCount;
-        university.elections[electionId].phase = ElectionPhase.Registration;
-        university.electionCount++;
-        emit ElectionCreated(universityId, electionId);
+    function addUniversity(uint256 universityID) external {
+        universities[universityID] = true;
+        emit UniversityAdded(universityID);
     }
 
-    function startVoting(uint256 universityId, uint256 electionId) external {
-        require(universities[universityId].exists, "University does not exist");
-        University storage university = universities[universityId];
-        require(university.elections[electionId].phase == ElectionPhase.Registration, "Registration phase must be active to start voting");
-        university.elections[electionId].phase = ElectionPhase.Voting;
+    function createElection(uint256 universityID, uint256 electionID) external onlyUniversity(universityID) {
+        Election storage election = elections[universityID][electionID];
+        require(election.universityID == 0, "Election already exists");
+        election.universityID = universityID;
+        election.electionID = electionID;
+        emit ElectionCreated(universityID, electionID);
     }
 
-    function endElection(uint256 universityId, uint256 electionId) external {
-        require(universities[universityId].exists, "University does not exist");
-        University storage university = universities[universityId];
-        require(university.elections[electionId].phase == ElectionPhase.Voting, "Voting phase must be active to end election");
-        university.elections[electionId].phase = ElectionPhase.Ended;
+    function addCandidate(uint256 universityID, uint256 electionID, uint256 candidateID, string memory name) external onlyUniversity(universityID) {
+        Election storage election = elections[universityID][electionID];
+        require(election.universityID != 0, "Election does not exist");
+        require(bytes(name).length > 0, "Candidate name cannot be empty");
+
+        election.candidates[candidateID] = Candidate(candidateID, name);
+        election.candidateCount++;
+        emit CandidateAdded(universityID, electionID, candidateID, name);
     }
 
-    function registerVoter(uint256 universityId, uint256 electionId, address _voter, uint256 _nullifierHash) external {
-        require(universities[universityId].exists, "University does not exist");
-        University storage university = universities[universityId];
-        Election storage election = university.elections[electionId];
-        require(election.phase == ElectionPhase.Registration, "Registration phase is not active");
-        require(!election.voters[_voter].registered, "Voter already registered");
-        election.voters[_voter] = Voter(true, false, _nullifierHash);
-        emit VoterRegistered(universityId, electionId, _voter);
+    function startVoting(uint256 universityID, uint256 electionID) external onlyUniversity(universityID) {
+        Election storage election = elections[universityID][electionID];
+        require(election.universityID != 0, "Election does not exist");
+        require(!election.isVotingOpen, "Voting already started");
+        election.isVotingOpen = true;
+        emit VotingStarted(universityID, electionID);
     }
 
-    function castVote(uint256 universityId, uint256 electionId, uint256 _nullifierHash) external {
-        require(universities[universityId].exists, "University does not exist");
-        University storage university = universities[universityId];
-        Election storage election = university.elections[electionId];
-        Voter storage voter = election.voters[msg.sender];
-        require(election.phase == ElectionPhase.Voting, "Voting phase is not active");
-        require(voter.registered, "Voter not registered");
-        require(!voter.voted, "Voter has already voted");
-        require(voter.nullifierHash == _nullifierHash, "Invalid nullifier hash");
-
-        voter.voted = true;
-        election.totalVotes += 1;
-        emit VoteCast(universityId, electionId, _nullifierHash);
+    function endVoting(uint256 universityID, uint256 electionID) external onlyUniversity(universityID) {
+        Election storage election = elections[universityID][electionID];
+        require(election.universityID != 0, "Election does not exist");
+        require(election.isVotingOpen, "Voting not started yet");
+        election.isVotingOpen = false;
+        emit VotingEnded(universityID, electionID);
     }
 
-    function hasVoted(uint256 universityId, uint256 electionId, address _voter) external view returns (bool) {
-        require(universities[universityId].exists, "University does not exist");
-        University storage university = universities[universityId];
-        Election storage election = university.elections[electionId];
-        return election.voters[_voter].voted;
+    function registerVoter(
+        uint256 universityID,
+        uint256 electionID,
+        bytes32 nullifierHash,
+        uint256[8] calldata proof
+    ) external onlyUniversity(universityID) {
+        Election storage election = elections[universityID][electionID];
+        require(election.universityID != 0, "Election does not exist");
+        require(!election.registeredVoters[nullifierHash], "Voter already registered");
+
+        bool isValidProof = registrationVerifier.verifyProof(
+            [proof[0], proof[1]],
+            [[proof[2], proof[3]], [proof[4], proof[5]]],
+            [proof[6], proof[7]],
+            [uint256(nullifierHash)]
+        );
+
+        require(isValidProof, "Invalid registration proof");
+
+        election.registeredVoters[nullifierHash] = true;
+        emit VoterRegistered(universityID, electionID, nullifierHash);
+    }
+
+    function castVote(
+        uint256 universityID,
+        uint256 electionID,
+        uint256 candidateID,
+        bytes32 nullifierHash,
+        uint256[8] calldata proof
+    ) external onlyUniversity(universityID) {
+        Election storage election = elections[universityID][electionID];
+        require(election.universityID != 0, "Election does not exist");
+        require(election.isVotingOpen, "Voting is not open");
+        require(!election.hasVoted[msg.sender], "You have already voted");
+        require(election.candidates[candidateID].candidateID != 0, "Invalid candidate");
+
+        bool isValidProof = votingVerifier.verifyProof(
+            [proof[0], proof[1]],
+            [[proof[2], proof[3]], [proof[4], proof[5]]],
+            [proof[6], proof[7]],
+            [uint256(nullifierHash), candidateID]
+        );
+
+        require(isValidProof, "Invalid vote proof");
+
+        require(election.registeredVoters[nullifierHash], "Voter not registered");
+
+        election.hasVoted[msg.sender] = true;
+        emit VoteCast(universityID, electionID, nullifierHash, candidateID);
     }
 }

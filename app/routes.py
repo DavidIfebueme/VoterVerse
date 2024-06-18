@@ -56,3 +56,28 @@ def cast_vote():
 @main.route('/results', methods=['GET'])
 def results():
     return render_template('results.html')
+
+@main.route('/add_candidate', methods=['POST'])
+def add_candidate():
+    university_id = int(request.form['university_id'])
+    election_id = int(request.form['election_id'])
+    candidate_id = int(request.form['candidate_id'])
+    candidate_name = request.form['candidate_name']
+    tx_hash = contract.functions.addCandidate(university_id, election_id, candidate_id, candidate_name).transact({'from': w3.eth.accounts[0]})
+    w3.eth.wait_for_transaction_receipt(tx_hash)
+    return redirect(url_for('main.index'))
+
+@main.route('/get_candidates', methods=['GET'])
+def get_candidates():
+    university_id = int(request.args.get('university_id'))
+    election_id = int(request.args.get('election_id'))
+    candidates = contract.functions.getCandidates(university_id, election_id).call()
+    return {'candidates': candidates}
+
+@main.route('/get_vote_count', methods=['GET'])
+def get_vote_count():
+    university_id = int(request.args.get('university_id'))
+    election_id = int(request.args.get('election_id'))
+    candidate_id = int(request.args.get('candidate_id'))
+    vote_count = contract.functions.getCandidateVoteCount(university_id, election_id, candidate_id).call()
+    return {'vote_count': vote_count}
