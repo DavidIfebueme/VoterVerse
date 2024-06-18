@@ -8,6 +8,7 @@ contract VoterVerse {
     struct Candidate {
         uint256 candidateID;
         string name;
+        uint256 voteCount;
     }
 
     struct Election {
@@ -61,7 +62,7 @@ contract VoterVerse {
         require(election.universityID != 0, "Election does not exist");
         require(bytes(name).length > 0, "Candidate name cannot be empty");
 
-        election.candidates[candidateID] = Candidate(candidateID, name);
+        election.candidates[candidateID] = Candidate(candidateID, name, 0);
         election.candidateCount++;
         emit CandidateAdded(universityID, electionID, candidateID, name);
     }
@@ -129,7 +130,31 @@ contract VoterVerse {
 
         require(election.registeredVoters[nullifierHash], "Voter not registered");
 
+        election.candidates[candidateID].voteCount++;
         election.hasVoted[msg.sender] = true;
         emit VoteCast(universityID, electionID, nullifierHash, candidateID);
+    }
+
+    function getCandidateVoteCount(uint256 universityID, uint256 electionID, uint256 candidateID) external view returns (uint256) {
+        Election storage election = elections[universityID][electionID];
+        require(election.universityID != 0, "Election does not exist");
+        require(election.candidates[candidateID].candidateID != 0, "Invalid candidate");
+        return election.candidates[candidateID].voteCount;
+    }
+
+    function getCandidates(uint256 universityID, uint256 electionID) external view returns (Candidate[] memory) {
+        Election storage election = elections[universityID][electionID];
+        require(election.universityID != 0, "Election does not exist");
+
+        Candidate[] memory candidateList = new Candidate[](election.candidateCount);
+        uint256 counter = 0;
+
+        for (uint256 i = 0; i < election.candidateCount; i++) {
+            Candidate storage candidate = election.candidates[i];
+            candidateList[counter] = candidate;
+            counter++;
+        }
+
+        return candidateList;
     }
 }
