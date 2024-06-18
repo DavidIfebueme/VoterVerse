@@ -1,33 +1,27 @@
-include "libsnark/circuits/poseidon.h";
+pragma circom 2.0.0;
 
-template VoterVerification() {
-    signal private input voterAddress;
-    signal private input nullifierHash;
-    signal private input encryptedVote;
+include "circomlib/poseidon.circom";
 
-    // Hash voterAddress and nullifierHash using Poseidon hash function
-    signal hashResult = Poseidon([voterAddress, nullifierHash]);
+template VotingCircuit() {
+    // Public inputs
+    signal input nullifierHash;
+    signal input candidateChoice;
+    
+    // Private inputs
+    signal private input privateKey;
 
-    // Define constraints for voter registration and uniqueness
-    enforce hashResult == 0; // Example constraint, replace with actual constraints
+    // Output the computed nullifier hash
+    signal output computedNullifierHash;
 
-    // Additional constraints to prevent double voting
-    enforce !checkDoubleVoting(voterAddress, nullifierHash);
+    // Poseidon hash
+    component hasher = Poseidon(1);
+    hasher.inputs[0] <== privateKey;
 
-    // Output
-    output encryptedVote;
+    // Assign the hash output
+    computedNullifierHash <== hasher.out;
+    
+    // Ensure the computed hash matches the provided nullifier hash
+    nullifierHash === computedNullifierHash;
 }
 
-component main = VoterVerification();
-
-// Function to check if voter has already voted
-function checkDoubleVoting(voterAddress, nullifierHash) {
-    // Example pseudocode for checking against smart contract state
-    if (voterAddress in registeredVoters) {
-        Voter storage voter = registeredVoters[voterAddress];
-        if (voter.voted || voter.nullifierHash == nullifierHash) {
-            return true; // Voter has already voted or nullifierHash matches (prevent replay attacks)
-        }
-    }
-    return false;
-}
+component main = VotingCircuit();
