@@ -1,5 +1,6 @@
 import { groth16 } from "snarkjs";
 import { ethers } from "ethers";
+import abi from '../contracts/voterverse.abi.json';
 
 // Function to generate proof
 async function generateRegistrationProof(signedMessageHash) {
@@ -50,7 +51,7 @@ async function handleRegistration() {
 
     // Submit the proof and nullifier hash to the blockchain
     const contractAddress = "0x34690B1B9a3bfb38c785c36Fd08936878273343e"; 
-    const abi = [/* YOUR_ABI_HERE */];  // Replace with your contract's ABI
+    //const abi = [/* YOUR_ABI_HERE */];
     const contract = new ethers.Contract(contractAddress, abi, signer);
     await contract.registerVoter(universityId, electionId, userAddress, publicSignals[0], proofArray);
 }
