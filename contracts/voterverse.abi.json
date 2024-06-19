@@ -1,0 +1,452 @@
+[
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "universityID",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "electionID",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "candidateID",
+				"type": "uint256"
+			},
+			{
+				"internalType": "string",
+				"name": "name",
+				"type": "string"
+			}
+		],
+		"name": "addCandidate",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "universityID",
+				"type": "uint256"
+			}
+		],
+		"name": "addUniversity",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "universityID",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "electionID",
+				"type": "uint256"
+			}
+		],
+		"name": "createElection",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "universityID",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "electionID",
+				"type": "uint256"
+			}
+		],
+		"name": "endVoting",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "universityID",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "electionID",
+				"type": "uint256"
+			}
+		],
+		"name": "startVoting",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "_registrationVerifier",
+				"type": "address"
+			},
+			{
+				"internalType": "address",
+				"name": "_votingVerifier",
+				"type": "address"
+			}
+		],
+		"stateMutability": "nonpayable",
+		"type": "constructor"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "universityID",
+				"type": "uint256"
+			},
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "electionID",
+				"type": "uint256"
+			},
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "candidateID",
+				"type": "uint256"
+			},
+			{
+				"indexed": false,
+				"internalType": "string",
+				"name": "name",
+				"type": "string"
+			}
+		],
+		"name": "CandidateAdded",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "universityID",
+				"type": "uint256"
+			},
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "electionID",
+				"type": "uint256"
+			}
+		],
+		"name": "ElectionCreated",
+		"type": "event"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "universityID",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "electionID",
+				"type": "uint256"
+			},
+			{
+				"internalType": "bytes32",
+				"name": "nullifierHash",
+				"type": "bytes32"
+			},
+			{
+				"internalType": "uint256[8]",
+				"name": "proof",
+				"type": "uint256[8]"
+			}
+		],
+		"name": "registerVoter",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "universityID",
+				"type": "uint256"
+			}
+		],
+		"name": "UniversityAdded",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "universityID",
+				"type": "uint256"
+			},
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "electionID",
+				"type": "uint256"
+			},
+			{
+				"indexed": false,
+				"internalType": "bytes32",
+				"name": "nullifierHash",
+				"type": "bytes32"
+			},
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "candidateID",
+				"type": "uint256"
+			}
+		],
+		"name": "VoteCast",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "universityID",
+				"type": "uint256"
+			},
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "electionID",
+				"type": "uint256"
+			},
+			{
+				"indexed": false,
+				"internalType": "bytes32",
+				"name": "nullifierHash",
+				"type": "bytes32"
+			}
+		],
+		"name": "VoterRegistered",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "universityID",
+				"type": "uint256"
+			},
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "electionID",
+				"type": "uint256"
+			}
+		],
+		"name": "VotingEnded",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "universityID",
+				"type": "uint256"
+			},
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "electionID",
+				"type": "uint256"
+			}
+		],
+		"name": "VotingStarted",
+		"type": "event"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"name": "elections",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "universityID",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "electionID",
+				"type": "uint256"
+			},
+			{
+				"internalType": "bool",
+				"name": "isVotingOpen",
+				"type": "bool"
+			},
+			{
+				"internalType": "uint256",
+				"name": "candidateCount",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "universityID",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "electionID",
+				"type": "uint256"
+			}
+		],
+		"name": "getCandidates",
+		"outputs": [
+			{
+				"components": [
+					{
+						"internalType": "uint256",
+						"name": "candidateID",
+						"type": "uint256"
+					},
+					{
+						"internalType": "string",
+						"name": "name",
+						"type": "string"
+					},
+					{
+						"internalType": "uint256",
+						"name": "voteCount",
+						"type": "uint256"
+					}
+				],
+				"internalType": "struct VoterVerse.Candidate[]",
+				"name": "",
+				"type": "tuple[]"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "universityID",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "electionID",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "candidateID",
+				"type": "uint256"
+			}
+		],
+		"name": "getCandidateVoteCount",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "registrationVerifier",
+		"outputs": [
+			{
+				"internalType": "contract Groth16Verifier",
+				"name": "",
+				"type": "address"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"name": "universities",
+		"outputs": [
+			{
+				"internalType": "bool",
+				"name": "",
+				"type": "bool"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "votingVerifier",
+		"outputs": [
+			{
+				"internalType": "contract VotingVerifier",
+				"name": "",
+				"type": "address"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	}
+]

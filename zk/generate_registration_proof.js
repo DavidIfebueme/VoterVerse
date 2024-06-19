@@ -49,7 +49,7 @@ async function handleRegistration() {
     ];
 
     // Submit the proof and nullifier hash to the blockchain
-    const contractAddress = "YOUR_CONTRACT_ADDRESS_HERE";  // Replace with your contract address
+    const contractAddress = "0x34690B1B9a3bfb38c785c36Fd08936878273343e"; 
     const abi = [/* YOUR_ABI_HERE */];  // Replace with your contract's ABI
     const contract = new ethers.Contract(contractAddress, abi, signer);
     await contract.registerVoter(universityId, electionId, userAddress, publicSignals[0], proofArray);
