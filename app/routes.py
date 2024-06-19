@@ -25,8 +25,11 @@ def end_election():
     w3.eth.wait_for_transaction_receipt(tx_hash)
     return redirect(url_for('main.index'))
 
-@main.route('/register_voter', methods=['GET'])
+@main.route('/register_voter', methods=['GET', 'POST'])
 def register_voter():
+    if request.method == 'POST':
+        subprocess.run(['node', 'zk/generate_registration_proof.js'])
+        return redirect(url_for('main.index'))
     return render_template('register.html')
 
 @main.route('/generate_proof', methods=['POST'])

@@ -1,10 +1,10 @@
-pragma circom 2.0.0;
+pragma circom 2.1.9;
 
-include "circomlib/poseidon.circom";
+include "poseidon.circom";
 
 template RegistrationCircuit() {
     // Private inputs
-    signal private input signedMessage;
+    signal input signedMessage;
 
     // Output the nullifier hash
     signal output nullifierHash;
