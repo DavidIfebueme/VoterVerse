@@ -1,6 +1,6 @@
 pragma circom 2.1.9;
 
-include "circomlib/poseidon.circom";
+include "poseidon.circom";
 
 template VotingCircuit() {
     // Public inputs
