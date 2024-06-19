@@ -21,7 +21,7 @@ contract VoterVerse {
         mapping(bytes32 => bool) registeredVoters;
     }
 
-    RegistrationVerifier public registrationVerifier;
+    Groth16Verifier public registrationVerifier;
     VotingVerifier public votingVerifier;
     mapping(uint256 => mapping(uint256 => Election)) public elections;
     mapping(uint256 => bool) public universities;
@@ -35,7 +35,7 @@ contract VoterVerse {
     event VoteCast(uint256 universityID, uint256 electionID, bytes32 nullifierHash, uint256 candidateID);
 
     constructor(address _registrationVerifier, address _votingVerifier) {
-        registrationVerifier = RegistrationVerifier(_registrationVerifier);
+        registrationVerifier = Groth16Verifier(_registrationVerifier);
         votingVerifier = VotingVerifier(_votingVerifier);
     }
 
@@ -106,34 +106,34 @@ contract VoterVerse {
         emit VoterRegistered(universityID, electionID, nullifierHash);
     }
 
-    function castVote(
-        uint256 universityID,
-        uint256 electionID,
-        uint256 candidateID,
-        bytes32 nullifierHash,
-        uint256[8] calldata proof
-    ) external onlyUniversity(universityID) {
-        Election storage election = elections[universityID][electionID];
-        require(election.universityID != 0, "Election does not exist");
-        require(election.isVotingOpen, "Voting is not open");
-        require(!election.hasVoted[msg.sender], "You have already voted");
-        require(election.candidates[candidateID].candidateID != 0, "Invalid candidate");
+    // function castVote(
+    //     uint256 universityID,
+    //     uint256 electionID,
+    //     uint256 candidateID,
+    //     bytes32 nullifierHash,
+    //     uint256[8] calldata proof
+    // ) external onlyUniversity(universityID) {
+    //     Election storage election = elections[universityID][electionID];
+    //     require(election.universityID != 0, "Election does not exist");
+    //     require(election.isVotingOpen, "Voting is not open");
+    //     require(!election.hasVoted[msg.sender], "You have already voted");
+    //     require(election.candidates[candidateID].candidateID != 0, "Invalid candidate");
 
-        bool isValidProof = votingVerifier.verifyProof(
-            [proof[0], proof[1]],
-            [[proof[2], proof[3]], [proof[4], proof[5]]],
-            [proof[6], proof[7]],
-            [uint256(nullifierHash), candidateID]
-        );
+    //     bool isValidProof = votingVerifier.verifyProof(
+    //         [proof[0], proof[1]],
+    //         [[proof[2], proof[3]], [proof[4], proof[5]]],
+    //         [proof[6], proof[7]],
+    //         [uint256(nullifierHash), candidateID]
+    //     );
 
-        require(isValidProof, "Invalid vote proof");
+    //     require(isValidProof, "Invalid vote proof");
 
-        require(election.registeredVoters[nullifierHash], "Voter not registered");
+    //     require(election.registeredVoters[nullifierHash], "Voter not registered");
 
-        election.candidates[candidateID].voteCount++;
-        election.hasVoted[msg.sender] = true;
-        emit VoteCast(universityID, electionID, nullifierHash, candidateID);
-    }
+    //     election.candidates[candidateID].voteCount++;
+    //     election.hasVoted[msg.sender] = true;
+    //     emit VoteCast(universityID, electionID, nullifierHash, candidateID);
+    // }
 
     function getCandidateVoteCount(uint256 universityID, uint256 electionID, uint256 candidateID) external view returns (uint256) {
         Election storage election = elections[universityID][electionID];
