@@ -28,8 +28,9 @@ def end_election():
 @main.route('/register_voter', methods=['GET', 'POST'])
 def register_voter():
     if request.method == 'POST':
-        subprocess.run(['node', 'zk/generate_registration_proof.js'])
-        return redirect(url_for('main.index'))
+        #subprocess.run(['node', 'static/js/generate_registration_proof.js'])
+        #return redirect(url_for('main.index'))
+        pass
     return render_template('register.html')
 
 @main.route('/generate_proof', methods=['POST'])
