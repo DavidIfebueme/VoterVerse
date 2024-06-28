@@ -33,25 +33,25 @@ def register_voter():
         pass
     return render_template('register.html')
 
-@main.route('/generate_proof', methods=['POST'])
-def generate_proof():
-    input_data = {
-        "nullifierHash": request.form['nullifier_hash']
-    }
-    with open('zk/input.json', 'w') as f:
-        json.dump(input_data, f)
+# @main.route('/generate_proof', methods=['POST'])
+# def generate_proof():
+#     input_data = {
+#         "nullifierHash": request.form['nullifier_hash']
+#     }
+#     with open('zk/input.json', 'w') as f:
+#         json.dump(input_data, f)
 
-    subprocess.run(['node', 'zk/generate_proof.js'])
+#     subprocess.run(['node', 'zk/generate_proof.js'])
 
-    with open('zk/proof.json') as f:
-        proof = json.load(f)
-    with open('zk/public.json') as f:
-        public_signals = json.load(f)
+#     with open('zk/proof.json') as f:
+#         proof = json.load(f)
+#     with open('zk/public.json') as f:
+#         public_signals = json.load(f)
 
-    return {
-        'proof': proof,
-        'public_signals': public_signals
-    }
+#     return {
+#         'proof': proof,
+#         'public_signals': public_signals
+#     }
 
 @main.route('/cast_vote', methods=['GET', 'POST'])
 def cast_vote():

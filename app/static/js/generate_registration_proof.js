@@ -1,11 +1,11 @@
 import { groth16 } from "snarkjs";
 import { ethers } from "ethers";
-import abi from '../contracts/voterverse.abi.json';
+import abi from '../../../contracts/voterverse.abi.json';
 
 // Function to generate proof
 async function generateRegistrationProof(signedMessageHash) {
-    const wasmPath = "registration.wasm";  // Path to the wasm file
-    const zkeyPath = "registration_final.zkey";  // Path to the zkey file
+    const wasmPath = "../../../registration_js/zk-circuits/registration.wasm";  // Path to the wasm file
+    const zkeyPath = "../../../zk-circuits/registration_final.zkey";  // Path to the zkey file
 
     const input = {
         signedMessageHash: signedMessageHash
