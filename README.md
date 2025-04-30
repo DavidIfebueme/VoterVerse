@@ -1,1 +1,1 @@
-# VoterVerse is a zro knowledge based voting software 
+# VoterVerse is a zero knowledge based voting software 
